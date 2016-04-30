@@ -5,7 +5,7 @@ CMT_TARGET_PSQL_IMPORTER=psql
 function _cmt_target_psql_validate_environment {
     if [ -z "${CMT_TARGET_PSQL_URI}" ]; then
         >&2 cat <<-EOM
-            Error CMT-PSQL001: Environment variable CMT_TARGET_PSQL_URI not defined.
+            Error CMT-PSQL001: The environment variable CMT_TARGET_PSQL_URI is not defined.
 
             For more information, see: ${CMT_HELP_URI}
 EOM
