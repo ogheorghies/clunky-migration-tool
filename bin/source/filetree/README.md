@@ -27,8 +27,7 @@ Function `source_get_changes` accepts a start version and an end version paramet
 references the first version, `v0001` in the example above, and version `last` references the last version,
 `v0003` in the example above.
 
-Versions are considered in the lexicographical order defined by their names. Downgrades are currently not supported,
-so supplying a start parameter that is after the end parameter produces an empty result.
+Versions are considered in the lexicographical order of their names - using semantic versioning alone won't work. Downgrades are currently not supported: supplying a start version that is after or equal to the end version produces an empty result.
 
 If the start version is `scratch`, the files in the `from-scratch` directory corresponding to the supplied end version
 are returned. Otherwise, the list of files in the `from-previous` directories spanning from the start version, but not
