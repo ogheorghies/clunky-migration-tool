@@ -15,6 +15,14 @@ Display the files involved in a migration from version `v3` to version `v5`:
     CMT_TARGET_DEBUG_VERSION=v3
     clunky-migration-tool -m filetree:debug v5
 
+Command line
+------------
+
+    clunky-migration-tool
+      -v|--verbose              enable verbose mode
+      -m|--mode source:target   upgrades taken from source type and applied to target type
+      <to-version>              "last" or empty (equivalent), or a given version (e.g. "v5")
+    
 Overview
 --------
 
