@@ -7,7 +7,7 @@ A version migration tool, written in Bash. May be used for database schema and d
 
 A PostgreSQL database is upgraded to version `v5`, using SQL files from the current directory:
 
-    CMT_TARGET_POSTGRESQL_URI=postgres://user:pwd@localhost:5432/app
+    CMT_TARGET_PSQL_URI=postgres://user:pwd@localhost:5432/app
     clunky-migration-tool -m filetree:psql v5
 
 The files involved in a migration from version `v3` to version `v5` are displayed:
