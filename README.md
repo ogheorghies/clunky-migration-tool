@@ -5,7 +5,7 @@ A version migration tool, written in Bash. May be used for database schema and d
 
 > **clunky** ˈklʌŋki/', *adjective*. Solid, heavy, and old-fashioned.
 
-A PostgreSQL database is upgraded to version `v5`, as described by a [SQL file tree](../blob/master/bin/source/filetree/README.md):
+A PostgreSQL database is upgraded to version `v5`, as described by a [SQL file tree](../master/bin/source/filetree/README.md):
 
     CMT_TARGET_PSQL_URI=postgres://user:pwd@localhost:5432/app
     clunky-migration-tool -m filetree:psql v5
