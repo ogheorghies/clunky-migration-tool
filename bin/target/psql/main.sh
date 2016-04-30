@@ -19,6 +19,7 @@ function target_initialize {
     ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI} >/dev/null <<-SQL
         CREATE TABLE IF NOT EXISTS clunky_migration_tool_metadata (
             version varchar PRIMARY KEY CHECK (version <> ''),
+            tag varchar default null,
             ts timestamp default (now())
         );
 SQL
