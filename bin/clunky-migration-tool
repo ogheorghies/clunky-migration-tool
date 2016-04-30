@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+
+set -e
+
+export CMT_HELP_URI=http://example.com/clunky-migration-tool
+
+# See Michael Kropat's mkropat/sh-realpath
+_cmt_resolve_symlinks() {
+    local dir_context path
+    path=$(readlink -- "$1")
+    if [ $? -eq 0 ]; then
+        dir_context=$(dirname -- "$1")
+        _cmt_resolve_symlinks "$(_cmt_prepend_path_if_relative "$dir_context" "$path")"
+    else
+        printf '%s\n' "$1"
+    fi
+}
+_cmt_prepend_path_if_relative() {
+    case "$2" in
+        /* ) printf '%s\n' "$2" ;;
+         * ) printf '%s\n' "$1/$2" ;;
+    esac
+}
+
+_cmt_validate_version() {
+    if [[ ! $1 =~ ^[:alnum:\.\-_]+$ ]]; then
+        >&2 cat <<-EOM
+            Error CMT001: Current version must only contain alphanumeric characters, '.', '-', or '_'.
+
+            You supplied: $1
+
+            For more information, see see: ${CMT_HELP_URI}
+EOM
+        exit 1
+    fi
+    echo "$1"
+}
+
+SCRIPT_DIR=$(dirname $(_cmt_resolve_symlinks "$0"))
+
+function _cmt_help {
+    echo "For help, see: ${CMT_HELP_URI} ."
+}
+
+function _cmt_load_definitions {
+    local TYPE_GROUP=$1
+    local TYPE=$2
+
+    local CUSTOM_FILE=${PWD}/.clunky-migration-tool/${TYPE_GROUP}/${TYPE}/main.sh
+    local SYSTEM_FILE=${SCRIPT_DIR}/${TYPE_GROUP}/${TYPE}/main.sh
+
+    local DEF_FILE=${CUSTOM_FILE}
+    if [ ! -f ${DEF_FILE} ]; then
+        DEF_FILE=${SYSTEM_FILE}
+    fi
+    if [ ! -f ${DEF_FILE} ]; then
+        >&2 cat <<-EOM
+            Error CMT002: Definition for "${TYPE}" as "${TYPE_GROUP}" not found.
+
+            Custom definition file not found at: "${CUSTOM_FILE}".
+            System definition file not found at: "${SYSTEM_FILE}".
+
+            For more information, see: ${CMT_HELP_URI}
+EOM
+        return 2
+    fi
+
+    [ -z ${CMT_VERBOSE} ] || echo "About to load ${DEF_FILE}"
+
+    . ${DEF_FILE}
+}
+
+function initialize {
+    while [[ $# -ge 1 ]]; do
+        local key="$1"
+        case ${key} in
+            -v|--verbose)
+                CMT_VERBOSE=1
+            ;;
+            -m|--mode)
+                CMT_MODE=$2
+                CMT_SOURCE_TYPE=${2%:*}
+                CMT_TARGET_TYPE=${2#*:}
+                shift # go to next argument
+            ;;
+            -h|--help)
+                _cmt_help
+                return 99
+            ;;
+            *)
+                CMT_END_VERSION=${1}
+            ;;
+        esac
+        shift
+    done
+
+    if [ -z "${CMT_SOURCE_TYPE}" -o -z "${CMT_TARGET_TYPE}" ]; then
+        >&2 cat <<-EOM
+            Error CMT003: Operation mode not defined. Please use argument -m source_type:target_type, for example:
+
+            clunky-migration-tool -m filetree:postgres
+
+            You supplied mode: ${CMT_MODE}
+            Interpreted source type: ${CMT_SOURCE_TYPE}
+            Interpreted target type: ${CMT_TARGET_TYPE}
+
+            For more information, see: ${CMT_HELP_URI}
+EOM
+        return 1
+    fi
+
+    _cmt_load_definitions source ${CMT_SOURCE_TYPE} || return 2
+    _cmt_load_definitions target ${CMT_TARGET_TYPE} || return 3
+
+    if type source_initialize >/dev/null 2>/dev/null ; then
+        source_initialize
+    fi
+    if type target_initialize >/dev/null 2>/dev/null ; then
+        target_initialize
+    fi
+}
+
+CMT_VERBOSE=
+initialize $*
+
+CMT_END_VERSION=${CMT_END_VERSION:-last}
+CMT_START_VERSION=$(target_get_current_version)
+CMT_ACTUAL_END_VERSION=$(source_get_version ${CMT_END_VERSION})
+
+[ -z ${CMT_VERBOSE} ] || echo "Migration path: ($CMT_START_VERSION) -> ($CMT_ACTUAL_END_VERSION)"
+
+if [ -z ${CMT_START_VERSION} ]; then
+    >&2 cat <<-EOM
+            Error CMT004: Start version not found on target, not even "scratch".
+
+            For more information, see: ${CMT_HELP_URI}
+EOM
+    return 4
+fi
+
+if [ -z ${CMT_ACTUAL_END_VERSION} ]; then
+    >&2 cat <<-EOM
+            Error CMT005: End version not found as a source.
+
+            Looking for version: "${CMD_END_VERSION}".
+
+            For more information, see: ${CMT_HELP_URI}
+EOM
+    return 5
+fi
+
+source_get_changes "${CMT_START_VERSION}" "${CMT_ACTUAL_END_VERSION}" | target_accept_changes "${CMT_ACTUAL_END_VERSION}"
