@@ -1,7 +1,7 @@
 Clunky migration tool
 =====================
 
-A version migration tool, written in Bash. May be used for database schema and data migrations.
+A version migration tool, written in Bash - fast and well tested. May be used for database schema and data migrations.
 
 > **clunky** ˈklʌŋki/', *adjective*. Solid, heavy, and old-fashioned.
 
