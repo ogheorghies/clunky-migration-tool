@@ -2,7 +2,7 @@
 
 set -e
 
-export CMT_HELP_URI=http://example.com/clunky-migration-tool
+export CMT_HELP_URI=https://github.com/ogheorghies/clunky-migration-tool/blob/master/
 
 # See Michael Kropat's mkropat/sh-realpath
 _cmt_resolve_symlinks() {
