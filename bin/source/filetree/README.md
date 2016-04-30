@@ -1,3 +1,6 @@
+Source type: filetree
+=====================
+
 This source type interprets a directory structure of the following kind:
 
      v0001
