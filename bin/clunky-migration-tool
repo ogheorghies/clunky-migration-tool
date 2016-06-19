@@ -98,7 +98,7 @@ function initialize {
         >&2 cat <<-EOM
             Error CMT003: Operation mode not defined. Please use argument -m source_type:target_type, for example:
 
-            clunky-migration-tool -m filetree:postgres
+            clunky-migration-tool -m filetree:psql
 
             You supplied mode: ${CMT_MODE}
             Interpreted source type: ${CMT_SOURCE_TYPE}
