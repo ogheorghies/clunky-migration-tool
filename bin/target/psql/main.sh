@@ -3,7 +3,6 @@
 CMT_TARGET_PSQL_IMPORTER=psql
 
 function _cmt_target_psql_validate_environment {
-    echo "xxx ${CMT_TARGET_PSQL_URI}"
     if [ -z "${CMT_TARGET_PSQL_URI}" ]; then
         >&2 cat <<-EOM
             Error CMT-PSQL001: The environment variable CMT_TARGET_PSQL_URI is not defined.
@@ -17,16 +16,18 @@ EOM
 function target_initialize {
     _cmt_target_psql_validate_environment || return 1
 
-    ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI} >/dev/null || {
-        >&2 cat <<-EOM
-                Error CMT-PSQL002: Failed to initialize the database specified by the environment variable CMT_TARGET_PSQL_URI.
+    ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI} -c "select version()" &>/dev/null || {
+            >&2 cat <<-EOM
+                Error CMT-PSQL002: Failed to connect to the database given by CMT_TARGET_PSQL_URI.
 
                 CMT_TARGET_PSQL_URI is set to "${CMT_TARGET_PSQL_URI}".
 
                 For more information, see: ${CMT_HELP_URI}
 EOM
-        false
-    } <<-SQL
+        return 1;
+    }
+
+    ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI} >/dev/null <<-SQL
         CREATE TABLE IF NOT EXISTS clunky_migration_tool_metadata (
             version varchar PRIMARY KEY CHECK (version <> ''),
             tag varchar default null,

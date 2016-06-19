@@ -21,6 +21,8 @@ Command line
     clunky-migration-tool
       -v|--verbose              enable verbose mode
       -m|--mode source:target   upgrades taken from source type and applied to target type
+      -D name=value             defines a variable 'name' set to 'value'
+      -C directory              run in the specified directory
       <to-version>              "last" or empty (equivalent), or a given version (e.g. "v5")
     
 Overview

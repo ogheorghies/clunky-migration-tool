@@ -3,6 +3,7 @@ Source type: filetree
 
 This source type interprets a directory structure of the following kind:
 
+    .clunky-migration-tool-source-filetree
      v0001
          from-scratch
              000-schema.sql

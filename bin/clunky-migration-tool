@@ -78,10 +78,33 @@ function initialize {
                 CMT_VERBOSE=1
             ;;
             -m|--mode)
+                [ -z "$2" ] && { echo "Mode not specified"; _cmt_help; return 100; };
+
                 CMT_MODE=$2
                 CMT_SOURCE_TYPE=${2%:*}
                 CMT_TARGET_TYPE=${2#*:}
-                shift # go to next argument
+
+                [ -z "$CMT_SOURCE_TYPE" ] && { echo "Required mode specification: src:dst"; _cmt_help; return 101; };
+                [ -z "$CMT_TARGET_TYPE" ] && { echo "Required mode specification: src:dst"; _cmt_help; return 102; };
+
+                shift
+            ;;
+            -D)
+                [ -z "$2" ] && { echo "Variable name and value not specified"; _cmt_help; return 110; };
+
+                local CMT_VARIABLE_NAME=${2%=*}
+                local CMT_VARIABLE_VALUE=${2#*=}
+
+                [ -z "$CMT_VARIABLE_NAME"  ] && { echo "Required variable specification: key=value"; _cmt_help; return 111; };
+                [ -z "$CMT_VARIABLE_VALUE" ] && { echo "Required variable specification: key=value"; _cmt_help; return 112; };
+
+                export ${CMT_VARIABLE_NAME}=${CMT_VARIABLE_VALUE}
+                shift
+            ;;
+            -C)
+                [ -z "$2" ] && { echo "Destination directory not specified"; _cmt_help; return 110; };
+                cd $2
+                shift
             ;;
             -h|--help)
                 _cmt_help
@@ -129,7 +152,7 @@ CMT_ACTUAL_END_VERSION=$(source_get_version ${CMT_END_VERSION})
 
 [ -z ${CMT_VERBOSE} ] || echo "Migration path: ($CMT_START_VERSION) -> ($CMT_ACTUAL_END_VERSION)"
 
-if [ -z ${CMT_START_VERSION} ]; then
+if [ -z "${CMT_START_VERSION}" ]; then
     >&2 cat <<-EOM
             Error CMT004: Start version not found on target, not even "scratch".
 
