@@ -1,4 +1,4 @@
-Define shell variable CMT_TARGET_PSQL_URI for this target to work.
+Define environment variable CMT_TARGET_PSQL_URI for this target to work.
 
 Example use:
 
