@@ -65,5 +65,5 @@ function target_accept_changes {
             echo "INSERT INTO clunky_migration_tool_metadata (version) VALUES ('$1');"
             echo "COMMIT;"
         fi
-    } | ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI}
+    } | ${CMT_TARGET_PSQL_IMPORTER} -v ON_ERROR_STOP=1 ${CMT_TARGET_PSQL_URI}
 }
