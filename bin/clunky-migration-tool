@@ -38,6 +38,8 @@ EOM
 
 SCRIPT_DIR=$(dirname $(_cmt_resolve_symlinks "$0"))
 
+>&2 echo "SCRIPT_DIR=${SCRIPT_DIR}"
+
 function _cmt_help {
     echo "For help, see: ${CMT_HELP_URI} ."
 }
@@ -59,6 +61,8 @@ function _cmt_load_definitions {
 
             Custom definition file not found at: "${CUSTOM_FILE}".
             System definition file not found at: "${SYSTEM_FILE}".
+
+            Current working directory is: "${PWD}".
 
             For more information, see: ${CMT_HELP_URI}
 EOM

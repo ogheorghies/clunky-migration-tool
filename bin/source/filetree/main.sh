@@ -8,7 +8,7 @@ function __cmt_source_filetree_validate {
 
                 A filetree source root for clunky must contain a file named "${FILE_MARKER}".
 
-                Working directory is: $(PWD)
+                Working directory is: ${PWD}
 
                 For more information, see: ${CMT_HELP_URI}
 EOM
@@ -66,12 +66,13 @@ function source_get_changes {
     [ -z ${END_VERSION} ] && return 1
 
     if [ "${START_VERSION}" == "scratch" ]; then
-        find ${END_VERSION}/from-scratch -type f
+        find ${END_VERSION}/from-scratch -type f | sort
     else
         find . -path "*/from-previous/*" -type f | \
             awk \
                 -v s="${START_VERSION}" \
                 -v e="${END_VERSION}" \
-            'BEGIN { FS = "/" } { if ($2 > s && $2 <= e) {print $0} }'
+            'BEGIN { FS = "/" } { if ($2 > s && $2 <= e) {print $0} }' | \
+            sort
     fi
 }
