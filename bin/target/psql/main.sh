@@ -57,6 +57,8 @@ function target_accept_changes {
         while read change_id; do
             >&2 echo "-- Importing ${change_id}."
             cat ${change_id}
+            echo # Ensure SQL command validity even when change_id contents does not end in newline
+
             CHANGES=$((CHANGES+1))
         done
         if [ "${CHANGES}" -eq "0" ]; then
