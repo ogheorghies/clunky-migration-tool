@@ -132,14 +132,3 @@ A source of type `filetree` may contain directories and files as follows:
 A target of type `psql` stores the current version into a specially created table, executes the SQL code
 contained in the SQL files whose names are supplied by the source, and updates the current version only if everything
 goes well during the upgrade.
-
-Hint for running docker-based tests on OS X
--------------------------------------------
-
-From Docker Quickstart Terminal run (one-time):
-
-    env | grep DOCKER | sed -e 's/^/export /' > ~/.docker/env
-
-To be able to run tests from any terminal, run:
-
-    . ~/.docker/env
