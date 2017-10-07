@@ -3,14 +3,27 @@ Clunky migration tool
 
 A version migration tool, written in Bash - fast and well tested. May be used for database schema and data migrations.
 
-> **clunky** ˈklʌŋki/', *adjective*. Solid, heavy, and old-fashioned.
-
-Upgrade a PostgreSQL database to the most recent schema, as described by a [SQL file tree](../master/bin/source/filetree/README.md):
+Upgrade a PostgreSQL database to the most recent schema, with:
 
     CMT_TARGET_PSQL_URI=postgres://user:pwd@localhost:5432/app
     clunky-migration-tool -m filetree:psql
 
-Display the files involved in a migration from version `v3` to version `v5`:
+An example [SQL file tree](../master/bin/source/filetree/README.md) that defines the upgrade process is given below:
+
+    .clunky-migration-tool-source-filetree
+     v0001
+         from-scratch
+             000-schema.sql
+             010-data.sql
+     v0002
+         from-previous
+             000-patch-schema.sql
+             010-update-data.sql
+         from-scratch
+             000-schema.sql
+             010-data.sql
+
+To display the files involved in a migration from version `v3` to version `v5` (a "dry run"), use:
 
     CMT_TARGET_DEBUG_VERSION=v3
     clunky-migration-tool -m filetree:debug v5
@@ -51,11 +64,11 @@ A *source* must define the following interface:
 The function `source_initialize` is optional, and may perform initialization tasks.
 
 The function `source_get_version` returns the actual identifier that corresponds to a given version name.
-An actual version identifier must be return for the special version names `first` and `last`, for example `v1` and `v5`,
+An actual version identifier must be returned for the special version names `first` and `last` - for example `v1` and `v5`,
 respectively.
 If the given `${VERSION_NAME}` cannot be resolved, the function must exit with an error code. If `${VERSION_NAME}`
 is `scratch`, then `scratch` must be returned. The names `first`, `last`, and `scratch` have a special meaning
-and cannot be used to denote specific application versions.
+and cannot be used as actual application versions.
 
 The function `source_get_changes` returns a set of handles to patches that need to be applied in order to migrate
 from `${VERSION_START}` to `${VERSION_END}` (both parameters are passed through `source_get_version`).
