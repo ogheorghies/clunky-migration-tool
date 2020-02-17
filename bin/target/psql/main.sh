@@ -6,8 +6,6 @@ else
     CMT_TARGET="${CMT_TARGET:-psql}"
 fi
 
-echo "CMT_TARGET=${CMT_TARGET}"
-
 function target_initialize {
     ${CMT_TARGET} -c "select version()" >/dev/null || {
             >&2 cat <<-EOM
