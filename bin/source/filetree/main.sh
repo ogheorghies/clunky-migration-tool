@@ -2,11 +2,12 @@
 
 function __cmt_source_filetree_validate {
     local FILE_MARKER=.clunky-migration-tool-source-filetree
-    if [ ! -f "$FILE_MARKER" ]; then
+    local FILE_MARKER2=.cmt.env
+    if [ ! -f "$FILE_MARKER" -a ! -f "$FILE_MARKER2" ]; then
         >&2 cat <<-EOM
                 Error CMT-FILETREE002: The working directory is not marked as a filetree source.
 
-                A filetree source root for clunky must contain a file named "${FILE_MARKER}".
+                A filetree source root must contain a file named "${FILE_MARKER}" or "${FILE_MARKER2}".
 
                 Working directory is: ${PWD}
 

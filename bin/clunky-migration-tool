@@ -96,13 +96,13 @@ function initialize {
             -D)
                 [ -z "$2" ] && { echo "Variable name and value not specified"; _cmt_help; return 110; };
 
-                local CMT_VARIABLE_NAME=${2%=*}
-                local CMT_VARIABLE_VALUE=${2#*=}
+                local CMT_VARIABLE_NAME="${2%=*}"
+                local CMT_VARIABLE_VALUE="${2#*=}"
 
                 [ -z "$CMT_VARIABLE_NAME"  ] && { echo "Required variable specification: key=value"; _cmt_help; return 111; };
                 [ -z "$CMT_VARIABLE_VALUE" ] && { echo "Required variable specification: key=value"; _cmt_help; return 112; };
 
-                export CMT_${CMT_VARIABLE_NAME}=${CMT_VARIABLE_VALUE}
+                export CMT_${CMT_VARIABLE_NAME}="${CMT_VARIABLE_VALUE}"
                 shift
             ;;
             -C)
@@ -148,7 +148,7 @@ EOM
 }
 
 CMT_VERBOSE=
-initialize $*
+initialize "$@"
 
 CMT_END_VERSION=${CMT_END_VERSION:-last}
 CMT_START_VERSION=$(target_get_current_version)
