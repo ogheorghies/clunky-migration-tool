@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 function _validate_environment {
-    if [ -z "${CMT_TARGET_DEBUG_VERSION}" ]; then
+    if [ -z "${CMT_TARGET_VERSION}" ]; then
         >&2 cat <<-EOM
-            Error CMT-DBG001: Environment variable CMT_TARGET_DEBUG_VERSION not defined.
+            Error CMT-DBG001: Environment variable CMT_TARGET_VERSION not defined.
 
             For more information, see: ${CMT_HELP_URI}
 EOM
@@ -14,7 +14,7 @@ EOM
 function target_get_current_version {
     _validate_environment || return 1
 
-    echo "${CMT_TARGET_DEBUG_VERSION}"
+    echo "${CMT_TARGET_VERSION}"
 }
 
 function target_accept_changes {

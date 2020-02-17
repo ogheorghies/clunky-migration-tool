@@ -3,6 +3,8 @@
 # Copyright (c) 2016 Ovidiu Gheorghies <ogheorghies@gmail.com>
 # ISC license
 
+set -e
+
 function pg_docker_operational {
     docker ps -a >/dev/null 2>/dev/null || {
         echo "Can we start a dockerized Postgres if docker does not work? No, we can't."
@@ -11,20 +13,17 @@ function pg_docker_operational {
 }
 
 function pg_docker_tool_down {
-    local DOCKER_NAME=$1
-    [ -z "${DOCKER_NAME}" ] && return 1
+    local DOCKER_NAME=${1?-Docker container name not given as first argument}
 
     >&2 docker stop ${DOCKER_NAME} || >&2 echo "Container not already started, that's OK."
-    >&2 docker rm   ${DOCKER_NAME} || >&2 echo "Container does not need to be removed, that's OK."
 }
 
 function pg_docker_tool_up {
-    local DOCKER_NAME=$1
-    [ -z "${DOCKER_NAME}" ] && return 1
+    local DOCKER_NAME=${1?-Docker container name not given as first argument}
 
-    pg_docker_tool_down
+    pg_docker_tool_down "${DOCKER_NAME}"
 
-    >&2 docker run -P --name ${DOCKER_NAME} -d kiasaki/alpine-postgres
+    (set -x; >&2 docker run --rm -P --name ${DOCKER_NAME} -d postgres:alpine)
 
     local PORT=$(docker port ${DOCKER_NAME} 5432/tcp | cut -f 2 -d :)       # Yes, that's a smiley.
     local DOCKER_IP=$(echo ${DOCKER_HOST} | cut -f 3 -d / | cut -f 1 -d :)

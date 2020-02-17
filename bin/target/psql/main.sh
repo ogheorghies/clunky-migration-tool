@@ -1,33 +1,26 @@
 #!/usr/bin/env bash
 
-CMT_TARGET_PSQL_IMPORTER=psql
+if [ -n "${CMT_TARGET_PSQL_URI}" ]; then
+    CMT_TARGET="psql ${CMT_TARGET_PSQL_URI}"
+else
+    CMT_TARGET="${CMT_TARGET:-psql}"
+fi
 
-function _cmt_target_psql_validate_environment {
-    if [ -z "${CMT_TARGET_PSQL_URI}" ]; then
-        >&2 cat <<-EOM
-            Error CMT-PSQL001: The environment variable CMT_TARGET_PSQL_URI is not defined.
-
-            For more information, see: ${CMT_HELP_URI}
-EOM
-        return 1
-     fi
-}
+echo "CMT_TARGET=${CMT_TARGET}"
 
 function target_initialize {
-    _cmt_target_psql_validate_environment || return 1
-
-    ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI} -c "select version()" &>/dev/null || {
+    ${CMT_TARGET} -c "select version()" >/dev/null || {
             >&2 cat <<-EOM
-                Error CMT-PSQL002: Failed to connect to the database given by CMT_TARGET_PSQL_URI.
+                Error CMT-PSQL002: Failed to connect to the database.
 
-                CMT_TARGET_PSQL_URI is set to "${CMT_TARGET_PSQL_URI}".
+                CMT_TARGET is set to "${CMT_TARGET}".
 
                 For more information, see: ${CMT_HELP_URI}
 EOM
         return 1;
     }
 
-    ${CMT_TARGET_PSQL_IMPORTER} ${CMT_TARGET_PSQL_URI} >/dev/null <<-SQL
+    ${CMT_TARGET} >/dev/null <<-SQL
         CREATE TABLE IF NOT EXISTS clunky_migration_tool_metadata (
             version varchar PRIMARY KEY CHECK (version <> ''),
             tag varchar default null,
@@ -37,9 +30,7 @@ SQL
 }
 
 function target_get_current_version {
-    _cmt_target_psql_validate_environment || return 1
-
-    VERSION=$(${CMT_TARGET_PSQL_IMPORTER} -t -A ${CMT_TARGET_PSQL_URI} <<-SQL
+    VERSION=$(${CMT_TARGET} -t -A <<-SQL
         SELECT version FROM clunky_migration_tool_metadata ORDER BY VERSION DESC LIMIT 1
 SQL
     );
@@ -48,8 +39,6 @@ SQL
 }
 
 function target_accept_changes {
-    _cmt_target_psql_validate_environment || return 1
-
     {
         echo "BEGIN;"
 
@@ -67,5 +56,5 @@ function target_accept_changes {
             echo "INSERT INTO clunky_migration_tool_metadata (version) VALUES ('$1');"
             echo "COMMIT;"
         fi
-    } | ${CMT_TARGET_PSQL_IMPORTER} -v ON_ERROR_STOP=1 ${CMT_TARGET_PSQL_URI}
+    } | ${CMT_TARGET} -v ON_ERROR_STOP=1
 }

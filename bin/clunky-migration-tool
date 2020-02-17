@@ -102,7 +102,7 @@ function initialize {
                 [ -z "$CMT_VARIABLE_NAME"  ] && { echo "Required variable specification: key=value"; _cmt_help; return 111; };
                 [ -z "$CMT_VARIABLE_VALUE" ] && { echo "Required variable specification: key=value"; _cmt_help; return 112; };
 
-                export ${CMT_VARIABLE_NAME}=${CMT_VARIABLE_VALUE}
+                export CMT_${CMT_VARIABLE_NAME}=${CMT_VARIABLE_VALUE}
                 shift
             ;;
             -C)

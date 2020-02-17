@@ -5,8 +5,7 @@ A version migration tool, written in Bash - fast and well tested. May be used fo
 
 Upgrade a PostgreSQL database to the most recent schema, with:
 
-    CMT_TARGET_PSQL_URI=postgres://user:pwd@localhost:5432/app
-    clunky-migration-tool -m filetree:psql
+    clunky-migration-tool --mode filetree:psql -D TARGET="psql postgres://user@localhost:5432/app"
 
 An example [SQL file tree](../master/bin/source/filetree/README.md) that defines the upgrade process is given below:
 
@@ -25,8 +24,7 @@ An example [SQL file tree](../master/bin/source/filetree/README.md) that defines
 
 To display the files involved in a migration from version `v3` to version `v5` (a "dry run"), use:
 
-    CMT_TARGET_DEBUG_VERSION=v3
-    clunky-migration-tool -m filetree:debug v5
+    clunky-migration-tool -m filetree:debug -D TARGET_VERSION=v3 v5
 
 Command line
 ------------
@@ -34,7 +32,7 @@ Command line
     clunky-migration-tool
       -v|--verbose              enable verbose mode
       -m|--mode source:target   upgrades taken from source type and applied to target type
-      -D name=value             defines a variable 'name' set to 'value'
+      -D name=value             defines a variable "CMT_${name}" set to "${value}"
       -C directory              run in the specified directory
       <to-version>              "last" or empty (equivalent), or a given version (e.g. "v5")
     

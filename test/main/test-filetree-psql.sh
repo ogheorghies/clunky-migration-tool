@@ -12,7 +12,7 @@ function test_filetree_psql_upgrade_from_scratch_to_last_version_works {
 
     pushd ../source/filetree/sql1-some-versions >/dev/null
 
-    ../../../../bin/clunky-migration-tool -m filetree:psql last >/dev/null 2>&1
+    ../../../../bin/clunky-migration-tool -m filetree:psql last &>/dev/null
     local COUNT=$(psql ${CMT_TARGET_PSQL_URI} -t -A -c 'SELECT count(*) from item2' 2>/dev/null)
     assert "echo ${COUNT}" 0
 
@@ -27,7 +27,7 @@ function test_filetree_psql_upgrade_from_scratch_to_specific_version_works {
 
     pushd ../source/filetree/sql1-some-versions >/dev/null
 
-    ../../../../bin/clunky-migration-tool -m filetree:psql v0002 >/dev/null 2>&1
+    ../../../../bin/clunky-migration-tool -m filetree:psql v0002 &>/dev/null
     local COUNT=$(psql ${CMT_TARGET_PSQL_URI} -t -A -c 'SELECT count(*) from item2' 2>/dev/null)
     assert "echo ${COUNT}" ""
 
@@ -42,14 +42,14 @@ function test_filetree_psql_upgrade_between_specific_versions_works {
 
     pushd ../source/filetree/sql1-some-versions >/dev/null
 
-    ../../../../bin/clunky-migration-tool -m filetree:psql v0002 >/dev/null 2>&1
+    ../../../../bin/clunky-migration-tool -m filetree:psql v0002 &>/dev/null
     local COUNT=$(psql ${CMT_TARGET_PSQL_URI} -t -A -c 'SELECT count(*) from item2' 2>/dev/null)
     assert "echo ${COUNT}" ""
 
     local COUNT=$(psql ${CMT_TARGET_PSQL_URI} -t -A -c 'SELECT count(*) from item' 2>/dev/null)
     assert "echo ${COUNT}" "2"
 
-    ../../../../bin/clunky-migration-tool -m filetree:psql v0004 >/dev/null 2>&1
+    ../../../../bin/clunky-migration-tool -m filetree:psql v0004 &>/dev/null
 
     local COUNT=$(psql ${CMT_TARGET_PSQL_URI} -t -A -c 'SELECT count(*) from item2' 2>/dev/null)
     assert "echo ${COUNT}" 0

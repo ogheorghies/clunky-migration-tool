@@ -88,7 +88,8 @@ TEST_LOG=/tmp/.cmt-psql.log
 
 echo "Creating test database, this should take a while. Run \"tail -f ${TEST_LOG}\" for details."
 CMT_TARGET_PSQL_URI=$(pg_docker_tool_up ${DOCKER_NAME} 2>${TEST_LOG})
-echo -e "Working with ${CMT_TARGET_PSQL_URI}\n"
+CMT_TARGET="psql ${CMT_TARGET_PSQL_URI}"
+echo -e "Working with CMT_TARGET='${CMT_TARGET}'\n"
 
 do_test test_target_initialize_works
 do_test test_target_get_current_version_works
