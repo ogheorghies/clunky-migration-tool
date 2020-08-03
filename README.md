@@ -9,7 +9,7 @@ Upgrade a PostgreSQL database to the most recent schema, with:
 
 An example [SQL file tree](../master/bin/source/filetree/README.md) that defines the upgrade process is given below:
 
-    .clunky-migration-tool-source-filetree
+    .cmt.env
      v0001
          from-scratch
              000-schema.sql
