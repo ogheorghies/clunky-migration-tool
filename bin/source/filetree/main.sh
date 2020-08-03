@@ -67,9 +67,9 @@ function source_get_changes {
     [ -z ${END_VERSION} ] && return 1
 
     if [ "${START_VERSION}" == "scratch" ]; then
-        find ${END_VERSION}/from-scratch -type f | sort
+        find -L ${END_VERSION}/from-scratch -type f | sort
     else
-        find . -path "*/from-previous/*" -type f | \
+        find -L . -path "*/from-previous/*" -type f | \
             awk \
                 -v s="${START_VERSION}" \
                 -v e="${END_VERSION}" \
